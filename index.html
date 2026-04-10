@@ -170,10 +170,20 @@ if (userImage) {
 }
 
 // Download
+bg.crossOrigin = "anonymous";
+bg.src = "poster.png";
+
+bg.onload = () => {
+  drawCanvas();
+};
+
 function downloadImage() {
+  drawCanvas(); // ensure latest render
+
   const link = document.createElement("a");
   link.download = "poster.png";
-  link.href = canvas.toDataURL();
+  link.href = canvas.toDataURL("image/png");
+
   link.click();
 }
 
