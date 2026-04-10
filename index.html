@@ -125,18 +125,31 @@ function drawCanvas() {
   ctx.drawImage(bg, 0, 0, 1125, 2000);
 
   // USER PHOTO (adjust position here)
-  if (userImage) {
-    ctx.save();
+if (userImage) {
+  ctx.save();
 
-    // Circle crop (optional)
-    ctx.beginPath();
-    ctx.arc(300, 570, 140, 0, Math.PI * 2);
-    ctx.closePath();
-    ctx.clip();
+  // Image position + size
+  const x = 130;
+  const y = 450;
+  const w = 340;
+  const h = 340;
 
-    ctx.drawImage(userImage, 130, 510, 340, 340);
-    ctx.restore();
-  }
+  // Center of the image
+  const cx = x + w / 2;
+  const cy = y + h / 2;
+  const radius = w / 2; // circle fits image width
+
+  // Circle crop centered on image
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.clip();
+
+  // Draw image
+  ctx.drawImage(userImage, x, y, w, h);
+
+  ctx.restore();
+}
 
   // TEXT
   ctx.fillStyle = "#000";
