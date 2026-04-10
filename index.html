@@ -1,75 +1,171 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Avatar Generator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retailer Creative Generator</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
     body {
-      font-family: Arial;
-      text-align: center;
-      background: #0f0f0f;
-      color: white;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #f5f5f5;
     }
-    input, button {
-      margin: 10px;
-      padding: 10px;
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+      display: flex;
+      gap: 20px;
     }
+
+    .preview-section {
+      flex: 1;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .form-section {
+      width: 350px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
     canvas {
-      margin-top: 20px;
-      border-radius: 12px;
+      width: 100%;
+      border-radius: 10px;
+      background: #000;
+    }
+
+    input, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      font-family: inherit;
+    }
+
+    button {
+      background: #16a34a;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
     }
   </style>
 </head>
+
 <body>
 
-<h2>Create Your Avatar</h2>
+<div class="container">
 
-<input type="text" id="name" placeholder="Enter your name"><br>
-<input type="file" id="photo"><br>
-<button onclick="generate()">Generate</button>
+  <!-- Preview -->
+  <div class="preview-section">
+    <h3>Live Preview</h3>
+    <canvas id="posterCanvas" width="1125" height="2000"></canvas>
+    <button onclick="downloadImage()">Download</button>
+  </div>
 
-<br>
-<canvas id="canvas" width="400" height="500"></canvas><br>
+  <!-- Form -->
+  <div class="form-section">
+    <h3>Enter Details</h3>
+
+    <input type="text" id="name" placeholder="Enter Name">
+    <input type="text" id="shop" placeholder="Enter Shop Name">
+    <input type="text" id="mobile" placeholder="Enter Mobile Number">
+    <input type="text" id="address" maxlength="30" placeholder="Enter Address">
+
+    <input type="file" id="photo">
+
+  </div>
+
+</div>
 
 <script>
-function generate() {
-  const name = document.getElementById("name").value;
-  const file = document.getElementById("photo").files[0];
+const canvas = document.getElementById("posterCanvas");
+const ctx = canvas.getContext("2d");
 
-  const canvas = document.getElementById("canvas");
-  const ctx = canvas.getContext("2d");
+const bg = new Image();
+bg.src = "/poster.png"; // 👈 keep your poster image
 
-  const userImg = new Image();
-  const frameImg = new Image();
+let userImage = null;
 
-  // 👉 Replace this with your frame image URL
-  frameImg.src = "https://i.imgur.com/your-frame.png";
+// Inputs
+const nameInput = document.getElementById("name");
+const shopInput = document.getElementById("shop");
+const mobInput = document.getElementById("mobile");
+const addrInput = document.getElementById("address");
 
-  userImg.onload = function () {
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+// Photo upload
+document.getElementById("photo").addEventListener("change", function(e) {
+  const file = e.target.files[0];
+  const img = new Image();
 
-    // 1️⃣ Draw background
-    ctx.fillStyle = "#111";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // 2️⃣ Draw user photo inside frame area
-    // Adjust these values to fit your frame
-    ctx.drawImage(userImg, 100, 120, 200, 200);
-
-    // 3️⃣ Draw frame on top
-    frameImg.onload = function () {
-      ctx.drawImage(frameImg, 0, 0, 400, 500);
-
-      // 4️⃣ Add name text
-      ctx.fillStyle = "#fff";
-      ctx.font = "bold 24px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText(name, 200, 450);
-    };
+  img.onload = function() {
+    userImage = img;
+    drawCanvas();
   };
 
-  userImg.src = URL.createObjectURL(file);
+  img.src = URL.createObjectURL(file);
+});
+
+// Live update
+[nameInput, shopInput, mobInput, addrInput].forEach(input => {
+  input.addEventListener("input", drawCanvas);
+});
+
+function drawCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Background
+  ctx.drawImage(bg, 0, 0, 1125, 2000);
+
+  // USER PHOTO (adjust position here)
+  if (userImage) {
+    ctx.save();
+
+    // Circle crop (optional)
+    ctx.beginPath();
+    ctx.arc(300, 600, 170, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+
+    ctx.drawImage(userImage, 130, 430, 340, 340);
+    ctx.restore();
+  }
+
+  // TEXT
+  ctx.fillStyle = "#000";
+  ctx.font = "bold 46px Poppins";
+  ctx.fillText(nameInput.value, 485, 650);
+
+  ctx.fillStyle = "#555";
+  ctx.font = "26px Poppins";
+  ctx.fillText(mobInput.value, 485, 710);
+
+  ctx.fillStyle = "#1a5c3a";
+  ctx.font = "bold 42px Poppins";
+  ctx.fillText(shopInput.value, 485, 770);
+
+  ctx.fillStyle = "#666";
+  ctx.font = "24px Poppins";
+  ctx.fillText(addrInput.value, 485, 830);
 }
+
+// Download
+function downloadImage() {
+  const link = document.createElement("a");
+  link.download = "poster.png";
+  link.href = canvas.toDataURL();
+  link.click();
+}
+
+// Initial render
+bg.onload = drawCanvas;
 </script>
 
 </body>
