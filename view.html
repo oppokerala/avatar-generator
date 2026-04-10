@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Avatar</title>
+  <style>
+    body { text-align: center; background: #000; color: #fff; }
+    img { margin-top: 50px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>Your Avatar</h2>
+<img id="avatar" width="300">
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+const data = localStorage.getItem(id);
+
+if (data) {
+  document.getElementById("avatar").src = data;
+} else {
+  document.body.innerHTML = "<h3>Avatar not found</h3>";
+}
+</script>
+
+</body>
+</html>
