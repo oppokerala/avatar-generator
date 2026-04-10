@@ -130,11 +130,11 @@ function drawCanvas() {
 
     // Circle crop (optional)
     ctx.beginPath();
-    ctx.arc(300, 620, 135, 0, Math.PI * 2);
+    ctx.arc(300, 600, 135, 0, Math.PI * 2);
     ctx.closePath();
     ctx.clip();
 
-    ctx.drawImage(userImage, 130, 430, 340, 340);
+    ctx.drawImage(userImage, 130, 450, 340, 340);
     ctx.restore();
   }
 
