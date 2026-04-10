@@ -181,15 +181,14 @@ if (userImage) {
 
 // Download
 function downloadImage() {
-  const link = document.createElement("a");
-
-  // force latest render
   drawCanvas();
 
-  link.download = "poster.png";
-  link.href = canvas.toDataURL("image/png");
-
-  link.click();
+  setTimeout(() => {
+    const link = document.createElement("a");
+    link.download = "poster.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }, 100);
 }
 
 // Initial render
