@@ -3,9 +3,20 @@
 <head>
   <title>Avatar Generator</title>
   <style>
-    body { font-family: Arial; text-align: center; background: #111; color: #fff; }
-    input, button { margin: 10px; padding: 10px; }
-    canvas { margin-top: 20px; border-radius: 10px; }
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #0f0f0f;
+      color: white;
+    }
+    input, button {
+      margin: 10px;
+      padding: 10px;
+    }
+    canvas {
+      margin-top: 20px;
+      border-radius: 12px;
+    }
   </style>
 </head>
 <body>
@@ -17,16 +28,9 @@
 <button onclick="generate()">Generate</button>
 
 <br>
-<canvas id="canvas" width="300" height="300"></canvas><br>
-
-<button onclick="download()">Download</button>
-<button onclick="share()">Get Share Link</button>
-
-<p id="link"></p>
+<canvas id="canvas" width="400" height="500"></canvas><br>
 
 <script>
-let finalImage = "";
-
 function generate() {
   const name = document.getElementById("name").value;
   const file = document.getElementById("photo").files[0];
@@ -34,35 +38,37 @@ function generate() {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
 
-  const img = new Image();
-  img.onload = function () {
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0,0,300,300);
+  const userImg = new Image();
+  const frameImg = new Image();
 
-    ctx.drawImage(img, 0, 0, 300, 300);
+  // 👉 Replace this with your frame image URL
+  frameImg.src = "https://i.imgur.com/your-frame.png";
 
-    ctx.fillStyle = "white";
-    ctx.font = "20px Arial";
-    ctx.fillText(name, 20, 280);
+  userImg.onload = function () {
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    finalImage = canvas.toDataURL();
+    // 1️⃣ Draw background
+    ctx.fillStyle = "#111";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 2️⃣ Draw user photo inside frame area
+    // Adjust these values to fit your frame
+    ctx.drawImage(userImg, 100, 120, 200, 200);
+
+    // 3️⃣ Draw frame on top
+    frameImg.onload = function () {
+      ctx.drawImage(frameImg, 0, 0, 400, 500);
+
+      // 4️⃣ Add name text
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 24px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText(name, 200, 450);
+    };
   };
-  img.src = URL.createObjectURL(file);
-}
 
-function download() {
-  const a = document.createElement("a");
-  a.href = finalImage;
-  a.download = "avatar.png";
-  a.click();
-}
-
-function share() {
-  const id = "id" + Date.now();
-  localStorage.setItem(id, finalImage);
-
-  const url = window.location.origin + "/view.html?id=" + id;
-  document.getElementById("link").innerHTML = url;
+  userImg.src = URL.createObjectURL(file);
 }
 </script>
 
