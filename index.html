@@ -90,6 +90,16 @@ const canvas = document.getElementById("posterCanvas");
 const ctx = canvas.getContext("2d");
 
 const bg = new Image();
+bg.crossOrigin = "anonymous";
+
+bg.onload = () => {
+  drawCanvas();
+};
+
+bg.onerror = () => {
+  console.log("Background failed to load");
+};
+
 bg.src = "https://oppokerala.github.io/avatar-generator/avatarf33.png"; // 👈 keep your poster image
 
 let userImage = null;
